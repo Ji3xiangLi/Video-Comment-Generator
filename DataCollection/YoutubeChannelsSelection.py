@@ -1,6 +1,7 @@
 from youtubesearchpython import Transcript, Comments, Video, VideosSearch
 import csv
 import os
+import pandas as pd
 from config import *
 
 def write_csv(path,contents):
@@ -42,41 +43,35 @@ def log(path, *msg):
         writer = csv.writer(f)
         writer.writerow(msg)
 
-# video_link ='https://www.youtube.com/watch?v=ZVYqB0uTKlE'
-# video_info = get_video_info(video_link)
-# video_id = video_info[0]
-# write_csv(INFO_PATH, [video_info])
-# for comments in get_video_comments(video_id):
-#     write_csv(COMMENT_PATH, comments)
-# transcript = get_video_transcript(video_id)
-# transcript.insert(0, TRANSCRIPT_HEAD)
-# write_csv(os.path.join(TRANSCRIPT_FOLDER, video_id+'.csv'), transcript)
+# Collect Data via Link
+video_link ='https://www.youtube.com/watch?v=ZVYqB0uTKlE'
+video_info = get_video_info(video_link)
+video_id = video_info[0]
+write_csv(INFO_PATH, [video_info])
+for comments in get_video_comments(video_id):
+    write_csv(COMMENT_PATH, comments)
+transcript = get_video_transcript(video_id)
+transcript.insert(0, TRANSCRIPT_HEAD)
+write_csv(os.path.join(TRANSCRIPT_FOLDER, video_id+'.csv'), transcript)
 
-# for tag in KEYWORDS:
-#     write_csv(INFO_PATH, search_video(tag))
+for tag in KEYWORDS:
+    write_csv(INFO_PATH, search_video(tag))
 
-# import pandas as pd
-# videos = pd.read_csv(INFO_PATH)
-# for index, video in videos.iterrows():
-#     video_id = video.loc['vid']
-#     print(index, video_id, video['link'])
-#     try:
-#         for comments in get_video_comments(video_id):
-#             write_csv(COMMENT_PATH, comments)
-#         log(LOG_SUCCESS_PATH,'comment',video_id)
-#     except:
-#         log(LOG_ERROR_PATH, 'comment', video_id)
-#     try:
-#         transcript = get_video_transcript(video_id)
-#         transcript.insert(0, TRANSCRIPT_HEAD)
-#         write_csv(os.path.join(TRANSCRIPT_FOLDER, video_id+'.csv'), transcript)
-#         log(LOG_SUCCESS_PATH,'transcript', video_id)
-#     except:
-#         log(LOG_ERROR_PATH, "transcript", video_id)
-# 根据vid爬取video_info
-with open('../add_info.csv', 'r') as f:
-    vids = f.readlines()
-for vid in vids:
-    vid = vid.strip()
-    print(get_video_info(vid))
-    break
+# Collect Video comment and Transctirt based on information
+videos = pd.read_csv(INFO_PATH)
+for index, video in videos.iterrows():
+    video_id = video.loc['vid']
+    print(index, video_id, video['link'])
+    try:
+        for comments in get_video_comments(video_id):
+            write_csv(COMMENT_PATH, comments)
+        log(LOG_SUCCESS_PATH,'comment',video_id)
+    except:
+        log(LOG_ERROR_PATH, 'comment', video_id)
+    try:
+        transcript = get_video_transcript(video_id)
+        transcript.insert(0, TRANSCRIPT_HEAD)
+        write_csv(os.path.join(TRANSCRIPT_FOLDER, video_id+'.csv'), transcript)
+        log(LOG_SUCCESS_PATH,'transcript', video_id)
+    except:
+        log(LOG_ERROR_PATH, "transcript", video_id)
