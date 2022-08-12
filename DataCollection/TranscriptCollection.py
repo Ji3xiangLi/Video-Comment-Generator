@@ -1,6 +1,6 @@
 from YoutubeChannelsSelection import *
 import pandas as pd
-'''确保收集的transcript都是英文的'''
+# Make Sure the language of the transcript is ENGLISH!
 for path in os.listdir(TRANSCRIPT_FOLDER):
     vid = path.split('.')[0]
     print('-' * 50)
